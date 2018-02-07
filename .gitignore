@@ -102,3 +102,6 @@ ENV/
 
 # data
 data/
+
+# deleted files
+deleted_files/
