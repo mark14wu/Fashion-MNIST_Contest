@@ -105,3 +105,6 @@ data/
 
 # deleted files
 deleted_files/
+
+# py_cache
+__pycache__/
