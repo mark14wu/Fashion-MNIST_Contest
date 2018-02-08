@@ -138,13 +138,13 @@ class ResNet(nn.Module):
         # self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.layer1 = self._make_layer(block, 64, layers[0])
-        self.layer1 = nn.DataParallel(self.layer1)
+        # self.layer1 = nn.DataParallel(self.layer1)
 
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
-        self.layer2 = nn.DataParallel(self.layer2)
+        # self.layer2 = nn.DataParallel(self.layer2)
 
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        self.layer3 = nn.DataParallel(self.layer3)
+        # self.layer3 = nn.DataParallel(self.layer3)
 
         # self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         # self.layer4 = nn.DataParallel(self.layer4)
