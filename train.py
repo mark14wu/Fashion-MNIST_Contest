@@ -22,7 +22,7 @@ parser.add_argument("--patience", type=int, default=5, help="early stopping pati
 parser.add_argument("--batch_size", type=int, default=32, help="batch size")
 parser.add_argument("--nepochs", type=int, default=200, help="max epochs")
 parser.add_argument("--nocuda", action='store_true', help="no cuda used")
-parser.add_argument("--nworkers", type=int, default=1, help="number of workers")
+parser.add_argument("--nworkers", type=int, default=36, help="number of workers")
 parser.add_argument("--seed", type=int, default=1, help="random seed")
 parser.add_argument("--data", type=str, default='fashion', help="mnist or fashion")
 parser.add_argument('--lr', type=float, default=0.001, help='learning_rate')

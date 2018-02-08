@@ -10,11 +10,11 @@ def my_optimizer(parameters, epoch, lr):
 
 def learning_rate(lr, epoch):
     if epoch < 4:
-        factor = 2
+        factor = 1
     elif epoch < 8:
-        factor = 4
+        factor = 5
     elif epoch < 12:
-        factor = 6
+        factor = 20
     else:
-        factor = 8
+        factor = 50
     return lr / factor
