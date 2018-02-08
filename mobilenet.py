@@ -28,7 +28,7 @@ predict = Dense(10, activation='softmax')(output)
 model = Model(inputs=input_image, outputs=predict)
 
 # Multi-GPU parallelism
-model = keras.utils.multi_gpu_model(model, 8)
+model = keras.utils.multi_gpu_model(model, gpus=8)
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.summary()
