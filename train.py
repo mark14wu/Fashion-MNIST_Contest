@@ -16,12 +16,12 @@ import numpy as np
 from learningrate import learning_rate
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--model", type=str, default='FashionSimpleNet', help="model")
+parser.add_argument("--model", type=str, default='resnet34', help="model")
 parser.add_argument("--patience", type=int, default=5, help="early stopping patience")
-parser.add_argument("--batch_size", type=int, default=64, help="batch size")
-parser.add_argument("--nepochs", type=int, default=20, help="max epochs")
+parser.add_argument("--batch_size", type=int, default=32, help="batch size")
+parser.add_argument("--nepochs", type=int, default=200, help="max epochs")
 parser.add_argument("--nocuda", action='store_true', help="no cuda used")
-parser.add_argument("--nworkers", type=int, default=4, help="number of workers")
+parser.add_argument("--nworkers", type=int, default=1, help="number of workers")
 parser.add_argument("--seed", type=int, default=1, help="random seed")
 parser.add_argument("--data", type=str, default='fashion', help="mnist or fashion")
 parser.add_argument('--lr', type=float, default=0.001, help='learning_rate')
