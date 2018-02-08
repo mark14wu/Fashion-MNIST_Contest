@@ -143,9 +143,9 @@ if __name__ == '__main__':
     criterion = torch.nn.CrossEntropyLoss()
     writer=SummaryWriter('mylog/')
     if cuda:
-        # net = net.cuda()
+        net = net.cuda()
         criterion = criterion.cuda()
-        net = torch.nn.DataParallel(net).cuda()
+        # net = torch.nn.DataParallel(net).cuda()
         # criterion = torch.nn.DataParallel(criterion).cuda()
     # early stopping parameters
     patience = args.patience
