@@ -3,8 +3,6 @@ def learning_rate(lr, epoch):
         factor = 1
     elif epoch < 4:
         factor = 10
-    # elif epoch < 9:
-    #     factor = 100
     else:
-        factor = 100
+        factor = 20
     return lr / factor
