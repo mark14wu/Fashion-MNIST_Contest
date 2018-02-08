@@ -1,3 +1,4 @@
+import keras
 import numpy as np
 import mnist_reader
 from tqdm import tqdm
