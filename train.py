@@ -17,9 +17,9 @@ import numpy as np
 from optimizer import my_optimizer
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--model", type=str, default='resnet34', help="model")
-parser.add_argument("--patience", type=int, default=5, help="early stopping patience")
-parser.add_argument("--batch_size", type=int, default=32, help="batch size")
+parser.add_argument("--model", type=str, default='resnet18', help="model")
+parser.add_argument("--patience", type=int, default=200, help="early stopping patience")
+parser.add_argument("--batch_size", type=int, default=128, help="batch size")
 parser.add_argument("--nepochs", type=int, default=200, help="max epochs")
 parser.add_argument("--nocuda", action='store_true', help="no cuda used")
 parser.add_argument("--nworkers", type=int, default=36, help="number of workers")
