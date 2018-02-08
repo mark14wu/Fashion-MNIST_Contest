@@ -13,6 +13,7 @@ import os
 from sklearn.metrics import f1_score
 from tensorboardX import SummaryWriter
 import numpy as np
+from learningrate import learning_rate
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", type=str, default='FashionSimpleNet', help="model")
@@ -23,6 +24,7 @@ parser.add_argument("--nocuda", action='store_true', help="no cuda used")
 parser.add_argument("--nworkers", type=int, default=4, help="number of workers")
 parser.add_argument("--seed", type=int, default=1, help="random seed")
 parser.add_argument("--data", type=str, default='fashion', help="mnist or fashion")
+parser.add_argument('--lr', type=float, default=0.001, help='learning_rate')
 args = parser.parse_args()
 
 cuda = not args.nocuda and torch.cuda.is_available() # use cuda
@@ -148,10 +150,9 @@ if __name__ == '__main__':
     # Print model to logfile
     print(net, file=logfile)
 
-    # Change optimizer for finetuning
-    optimizer = optim.Adam(net.parameters())
-
     for e in range(args.nepochs):
+        # Change optimizer for finetuning
+        optimizer = optim.Adam(net.parameters(), lr=learning_rate(args.lr, e))
         start = time.time()
         train_loss, train_acc, train_f1 = train(net, train_loader,
             criterion, optimizer)
