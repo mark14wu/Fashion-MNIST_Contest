@@ -6,7 +6,6 @@ def my_optimizer(parameters, epoch, lr):
     else:
         optimizer = torch.optim.SGD(parameters, lr * 50)
     return optimizer
-optimizer = optim.Adam(net.parameters(), lr=learning_rate(args.lr, e))
 
 def learning_rate(lr, epoch):
     if epoch < 4:
