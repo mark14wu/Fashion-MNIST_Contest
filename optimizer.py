@@ -1,3 +1,4 @@
+import torch
 import torch.optim as optim
 def my_optimizer(parameters, epoch, lr):
     lr = learning_rate(lr, epoch)
