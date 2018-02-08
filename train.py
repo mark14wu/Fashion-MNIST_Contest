@@ -13,7 +13,8 @@ import os
 from sklearn.metrics import f1_score
 from tensorboardX import SummaryWriter
 import numpy as np
-from learningrate import learning_rate
+# from learningrate import learning_rate
+from optimizer import my_optimizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", type=str, default='resnet34', help="model")
@@ -152,7 +153,7 @@ if __name__ == '__main__':
 
     for e in range(args.nepochs):
         # Change optimizer for finetuning
-        optimizer = optim.Adam(net.parameters(), lr=learning_rate(args.lr, e))
+        optimizer = my_optimizer(net.parameters(), e, args.lr)
         start = time.time()
         train_loss, train_acc, train_f1 = train(net, train_loader,
             criterion, optimizer)
