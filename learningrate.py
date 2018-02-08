@@ -1,4 +1,4 @@
-def learning_rate(args.lr, epoch):
+def learning_rate(lr, epoch):
     if epoch < 3:
         factor = 1
     elif epoch < 6:
@@ -7,4 +7,4 @@ def learning_rate(args.lr, epoch):
         factor = 3
     else:
         factor = 5
-    return args.lr / factor
+    return lr / factor
