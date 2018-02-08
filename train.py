@@ -11,13 +11,14 @@ import time
 import argparse
 import os
 from sklearn.metrics import f1_score
-from tensorboard
+from tensorboardX import SummaryWriter
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", type=str, default='FashionSimpleNet', help="model")
 parser.add_argument("--patience", type=int, default=5, help="early stopping patience")
 parser.add_argument("--batch_size", type=int, default=64, help="batch size")
-parser.add_argument("--nepochs", type=int, default=200, help="max epochs")
+parser.add_argument("--nepochs", type=int, default=20, help="max epochs")
 parser.add_argument("--nocuda", action='store_true', help="no cuda used")
 parser.add_argument("--nworkers", type=int, default=4, help="number of workers")
 parser.add_argument("--seed", type=int, default=1, help="random seed")
@@ -63,13 +64,13 @@ train_transforms = transforms.Compose([
                         # utils.RandomRotation(),
                         # utils.RandomTranslation(),
                         # utils.RandomVerticalFlip(),
-                        transforms.ToTensor()
-                        # transforms.Normalize((0.1307,), (0.3081,))
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
                         ]
                         )
 val_transforms = transforms.Compose([
-                        transforms.ToTensor()
-                        # transforms.Normalize((0.1307,), (0.3081,))
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
                         ])
 
 # Create dataloaders. Use pin memory if cuda.
@@ -93,45 +94,33 @@ def train(net, loader, criterion, optimizer):
     net.train()
     running_loss = 0
     running_accuracy = 0
-
     output_list = []
     y_list = []
     for i, (X,y) in enumerate(loader):
+        y_list += list(y)
         if cuda:
             X, y = X.cuda(), y.cuda()
-        # print(len(X))
-        # print(len(y))
-        # exit(1)
         X, y = Variable(X), Variable(y)
-
         output = net(X)
         loss = criterion(output, y)
-        y_list += list(y)
-        _, predicted = torch.max(output.data, 1)
-        # print(list(predicted))
-        output_list += list(predicted)
-        # exit(1)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         running_loss += loss.data[0]
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
+        output_list += list(pred)
         running_accuracy += pred.eq(y.data.view_as(pred)).cpu().sum()
-
-    print(len(y_list))
-    print(len(output_list))
-    print(y_list[0])
-    print(output_list[0])
     my_f1_score = f1_score(y_list, output_list, average='weighted')
-    print(my_f1_score)
-    exit(1)
     return running_loss/len(loader), running_accuracy/len(loader.dataset), my_f1_score
 
 def validate(net, loader, criterion):
     net.eval()
     running_loss = 0
     running_accuracy = 0
+    y_list=[]
+    output_list=[]
     for i, (X,y) in enumerate(loader):
+        y_list+=list(y)
         if cuda:
             X, y = X.cuda(), y.cuda()
         X, y = Variable(X, volatile=True), Variable(y)
@@ -139,15 +128,17 @@ def validate(net, loader, criterion):
         loss = criterion(output, y)
         running_loss += loss.data[0]
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
+        output_list+=list(pred)
         running_accuracy += pred.eq(y.data.view_as(pred)).cpu().sum()
-    return running_loss/len(loader), running_accuracy/len(loader.dataset)
+    my_f1_score = f1_score(y_list, output_list, average='weighted')
+    return running_loss/len(loader), running_accuracy/len(loader.dataset),my_f1_score
 
 
 if __name__ == '__main__':
     net = model.__dict__[args.model]()
     print(net)
     criterion = torch.nn.CrossEntropyLoss()
-
+    writer=SummaryWriter('mylog/')
     if cuda:
         net, criterion = net.cuda(), criterion.cuda()
     # early stopping parameters
@@ -168,16 +159,25 @@ if __name__ == '__main__':
         end = time.time()
 
         # print stats
-        stats ="""Epoch: {}\t train loss: {:.3f}, train acc: {:.3f}\t
-                val loss: {:.3f}, val acc: {:.3f}\t
-                time: {:.1f}s""".format( e, train_loss, train_acc, val_loss,
-                val_acc, end-start)
+        stats ="""Epoch: {}\t train loss: {:.3f}, train f1score: {:.3f}, train acc: {:.3f}\t
+                val loss: {:.3f},val f1score: {:.3f}, val acc: {:.3f}\t
+                time: {:.1f}s""".format( e, train_loss,train_f1, train_acc, val_loss,
+                val_f1,val_acc, end-start)
         print(stats)
         print(stats, file=logfile)
+        writer.add_scalar('train_loss', train_loss, e)
+        writer.add_scalar('val_loss', val_loss, e)
+        writer.add_scalar('train_acc', train_acc, e)
+        writer.add_scalar('val_acc', val_acc, e)
+        writer.add_scalar('train_f1', val_f1, e)
+        writer.add_scalar('val_f1', val_f1, e)
+
         log_value('train_loss', train_loss, e)
         log_value('val_loss', val_loss, e)
         log_value('train_acc', train_acc, e)
         log_value('val_acc', val_acc, e)
+        log_value('train_f1', val_f1, e)
+        log_value('val_f1', val_f1, e)
 
         #early stopping and save best model
         if val_loss < best_loss:
