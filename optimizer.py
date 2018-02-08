@@ -10,11 +10,11 @@ optimizer = optim.Adam(net.parameters(), lr=learning_rate(args.lr, e))
 
 def learning_rate(lr, epoch):
     if epoch < 4:
-        factor = 1
-    elif epoch < 8:
         factor = 2
-    else epoch < 12:
-        factor = 3
-    else:
+    elif epoch < 8:
         factor = 4
+    else epoch < 12:
+        factor = 6
+    else:
+        factor = 8
     return lr / factor
