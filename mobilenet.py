@@ -119,4 +119,4 @@ def data_generator(X,Y,batch_size=100):
 
 model.fit(X_train, y_train, batch_size=128, epochs=1, \
 callbacks=[tensorboard_callback, my_earlystop], shuffle=True, validation_data=(X_test, y_test))
-model.save_weights('mobilenet' + str(int(time.time())) + '.hdf5')
+model.save_weights('mobilenet-saved-models/mobilenet.' + str(int(time.time())) + '.hdf5')
