@@ -146,7 +146,7 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer3 = nn.DataParallel(self.layer3)
 
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+        # self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         # self.layer4 = nn.DataParallel(self.layer4)
 
         self.avgpool = nn.AvgPool2d(7)
@@ -186,7 +186,7 @@ class ResNet(nn.Module):
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
-        x = self.layer4(x)
+        # x = self.layer4(x)
 
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
