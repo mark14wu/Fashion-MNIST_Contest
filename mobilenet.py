@@ -62,7 +62,10 @@ predict = Dense(10, activation='softmax')(output)
 model = Model(inputs=input_image, outputs=predict)
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy',f1])
 model.summary()
-keras.callbacks.TensorBoard(log_dir='./mobilenet_logs', histogram_freq=5, batch_size=100, write_graph=True, write_grads=False, write_images=True, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)
+tensorboard_callback = keras.callbacks.TensorBoard(log_dir='./mobilenet_logs',\
+ histogram_freq=5, batch_size=100, write_graph=True,\
+  write_grads=False, write_images=True, embeddings_freq=0,\
+   embeddings_layer_names=None, embeddings_metadata=None)
 
 
 X_train = X_train.reshape((-1,28,28))
@@ -95,6 +98,8 @@ def data_generator(X,Y,batch_size=100):
 
 
 
-model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600, epochs=50, validation_data=data_generator(X_test,y_test), validation_steps=100)
+model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600,\
+ epochs=50, validation_data=data_generator(X_test,y_test), validation_steps=100,\
+ callbacks = [tensorboard_callback])
 
 
