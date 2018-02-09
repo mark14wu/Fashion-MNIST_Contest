@@ -98,8 +98,9 @@ def data_generator(X,Y,batch_size=100):
 
 
 
-model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600,\
- epochs=50, validation_data=data_generator(X_test,y_test), validation_steps=100,\
- callbacks = [tensorboard_callback])
-
+# model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600,\
+#  epochs=50, validation_data=data_generator(X_test,y_test), validation_steps=100,\
+#  callbacks = [tensorboard_callback])
+model.fit(X_train, y_train, batch_size=128, epochs=100, \
+callbacks=[tensorboard_callback], shuffle=True, validation_data=(X_test, y_test))
 
