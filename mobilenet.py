@@ -69,7 +69,7 @@ output = Dropout(0.5)(base_model.output)
 predict = Dense(10, activation='softmax')(output)
 
 model = Model(inputs=input_image, outputs=predict)
-my_adam = keras.optimizers.Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+my_adam = keras.optimizers.Adam(lr=0.00005, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model = multi_gpu_model(model, gpus=8)
 model.compile(optimizer=my_adam, loss='sparse_categorical_crossentropy', metrics=['accuracy',f1])
 model.summary()
