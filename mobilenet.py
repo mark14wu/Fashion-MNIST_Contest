@@ -69,7 +69,7 @@ output = Dropout(0.5)(base_model.output)
 predict = Dense(10, activation='softmax')(output)
 
 model = Model(inputs=input_image, outputs=predict)
-my_adam = keras.optimizers.Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+my_adam = keras.optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model = multi_gpu_model(model, gpus=8)
 model.compile(optimizer=my_adam, loss='sparse_categorical_crossentropy', metrics=['accuracy',f1])
 model.summary()
@@ -117,6 +117,6 @@ def data_generator(X,Y,batch_size=100):
 # model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600,\
 #  epochs=500, validation_data=data_generator(X_test,y_test), validation_steps=100)
 
-model.fit(X_train, y_train, batch_size=128, epochs=5000, \
+model.fit(X_train, y_train, batch_size=128, epochs=1, \
 callbacks=[tensorboard_callback, my_earlystop], shuffle=True, validation_data=(X_test, y_test))
 model.save_weights('mobilenet' + str(int(time.time())) + '.hdf5')
