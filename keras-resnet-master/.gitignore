@@ -1,0 +1,22 @@
+# .gitignore
+
+# misc
+*.pyc
+pylearn2/
+
+# virtualenv
+venv/
+
+# ides
+.project
+.pydevproject
+.idea/
+.settings/
+
+# models
+*.h5
+
+# images
+*images/
+*images.py
+
