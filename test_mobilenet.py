@@ -1,3 +1,4 @@
+import keras
 import sys
 from keras.models import Model
 import numpy as np
