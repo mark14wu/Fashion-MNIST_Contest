@@ -69,6 +69,10 @@ dropout = Dropout(0.5)(flat)
 softmax = Dense(nb_classes, activation='softmax')(dropout)
 
 model = Model(input=[input_var], output=[softmax])
+
+# Multi-GPU parallelism
+model = keras.utils.multi_gpu_model(model, gpus=8)
+
 model.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])
