@@ -19,6 +19,7 @@ from keras.layers import Input,Dense,Dropout,Lambda
 from keras.models import Model
 from keras import backend as K
 import keras
+import keras.optimizers
 
 
 def f1(y_true, y_pred):
@@ -51,7 +52,13 @@ def f1(y_true, y_pred):
     recall = recall(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall))
 
+class genCB(Callback):
+    def __init__(self, val):
+        self.val = val
 
+    def on_epoch_end(self, epoch, logs={}):
+        mtloss = np.mean([self.model.test_on_batch(data) for data in sample_data(self.val, once=True)])
+        print('                                   val loss %f' % (mtloss,))
 
 input_image = Input(shape=(height,width))
 input_image_ = Lambda(lambda x: K.repeat_elements(K.expand_dims(x,3),3,3))(input_image)
@@ -60,10 +67,11 @@ output = Dropout(0.5)(base_model.output)
 predict = Dense(10, activation='softmax')(output)
 
 model = Model(inputs=input_image, outputs=predict)
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy',f1])
+my_adam = keras.optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+model.compile(optimizer=my_adam, loss='sparse_categorical_crossentropy', metrics=['accuracy',f1])
 model.summary()
 tensorboard_callback = keras.callbacks.TensorBoard(log_dir='./mobilenet_logs',\
- histogram_freq=5, batch_size=100, write_graph=True,\
+ histogram_freq=0, batch_size=100, write_graph=True,\
   write_grads=False, write_images=True, embeddings_freq=0,\
    embeddings_layer_names=None, embeddings_metadata=None)
 
@@ -98,9 +106,9 @@ def data_generator(X,Y,batch_size=100):
 
 
 
-# model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600,\
-#  epochs=50, validation_data=data_generator(X_test,y_test), validation_steps=100,\
-#  callbacks = [tensorboard_callback])
-model.fit(X_train, y_train, batch_size=128, epochs=100, \
-callbacks=[tensorboard_callback], shuffle=True, validation_data=(X_test, y_test))
+model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600,\
+ epochs=500, validation_data=data_generator(X_test,y_test), validation_steps=100)
+
+# model.fit(X_train, y_train, batch_size=128, epochs=100, \
+# callbacks=[tensorboard_callback], shuffle=True, validation_data=(X_test, y_test))
 
