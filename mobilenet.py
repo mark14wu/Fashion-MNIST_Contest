@@ -3,7 +3,7 @@ import mnist_reader
 from tqdm import tqdm
 from scipy import misc
 import tensorflow as tf
-
+import time
 
 np.random.seed(2017)
 tf.set_random_seed(2017)
@@ -18,6 +18,7 @@ from keras.applications.mobilenet import MobileNet
 from keras.layers import Input,Dense,Dropout,Lambda
 from keras.models import Model
 from keras import backend as K
+from keras.utils import multi_gpu_model
 import keras
 import keras.optimizers
 import keras.callbacks
@@ -68,13 +69,19 @@ output = Dropout(0.5)(base_model.output)
 predict = Dense(10, activation='softmax')(output)
 
 model = Model(inputs=input_image, outputs=predict)
-my_adam = keras.optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+my_adam = keras.optimizers.Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+model = multi_gpu_model(model, gpus=8)
 model.compile(optimizer=my_adam, loss='sparse_categorical_crossentropy', metrics=['accuracy',f1])
 model.summary()
+
+# callbacks
 tensorboard_callback = keras.callbacks.TensorBoard(log_dir='./mobilenet_logs',\
  histogram_freq=0, batch_size=100, write_graph=True,\
   write_grads=False, write_images=True, embeddings_freq=0,\
    embeddings_layer_names=None, embeddings_metadata=None)
+
+my_earlystop = keras.callbacks.EarlyStopping(monitor='val_loss',\
+ min_delta=0, patience=10, verbose=0, mode='auto')
 
 
 X_train = X_train.reshape((-1,28,28))
@@ -110,6 +117,6 @@ def data_generator(X,Y,batch_size=100):
 # model.fit_generator(data_generator(X_train,y_train), steps_per_epoch=600,\
 #  epochs=500, validation_data=data_generator(X_test,y_test), validation_steps=100)
 
-model.fit(X_train, y_train, batch_size=128, epochs=100, \
-callbacks=[tensorboard_callback], shuffle=True, validation_data=(X_test, y_test))
-
+model.fit(X_train, y_train, batch_size=128, epochs=5000, \
+callbacks=[tensorboard_callback, my_earlystop], shuffle=True, validation_data=(X_test, y_test))
+model.save_weights('mobilenet' + str(int(time.time())) + '.hdf5')
