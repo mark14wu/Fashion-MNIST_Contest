@@ -20,6 +20,7 @@ from keras.models import Model
 from keras import backend as K
 import keras
 import keras.optimizers
+import keras.callbacks
 
 
 def f1(y_true, y_pred):
@@ -52,7 +53,7 @@ def f1(y_true, y_pred):
     recall = recall(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall))
 
-class genCB(Callback):
+class genCB(keras.callbacks.Callback):
     def __init__(self, val):
         self.val = val
 
