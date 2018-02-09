@@ -74,7 +74,7 @@ my_adam = keras.optimizers.Adam(lr=0.00005, beta_1=0.9, beta_2=0.999, epsilon=1e
 json_string = model.to_json()
 open('mobilenet-saved-models/architecture', 'w').write(json_string)
 print('success!')
-model = multi_gpu_model(model, gpus=8)
+# model = multi_gpu_model(model, gpus=8)
 model.compile(optimizer=my_adam, loss='sparse_categorical_crossentropy', metrics=['accuracy',f1])
 model.summary()
 
