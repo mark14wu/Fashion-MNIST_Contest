@@ -9,6 +9,8 @@ from __future__ import print_function
 from numpy import random
 random.seed(42)  # @UndefinedVariable
 
+import keras
+import keras.utils
 from keras.datasets import fashion_mnist
 from keras.models import Model
 from keras.layers import Input, Dense, Dropout, Activation, Flatten
